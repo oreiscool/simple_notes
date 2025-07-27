@@ -21,14 +21,18 @@ class _HomePageState extends State<HomePage> {
         ),
         centerTitle: true,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.add),
+      floatingActionButton: SizedBox(
+        width: 75,
+        height: 75,
+        child: FloatingActionButton(
+          onPressed: () {},
+          child: const Icon(Icons.add),
+        ),
       ),
       body: Center(
         child: ListView(
           children: [
-            NoteTile(noteTitle: 'Test', noteContent: 'This is a test note'),
+            NoteTile(noteTitle: 'Test', noteContent: 'This is a test note.'),
           ],
         ),
       ),
