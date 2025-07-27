@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:simple_notes/widgets/note_tile.dart';
+import 'package:simple_notes/models/notemodel.dart';
+import 'package:simple_notes/widgets/notetile.dart';
 import 'package:simple_notes/pages/notetaking.dart';
 import 'package:simple_notes/data/database.dart';
 
@@ -32,7 +33,9 @@ class _HomePageState extends State<HomePage> {
       body: Center(
         child: ListView(
           children: [
-            NoteTile(noteTitle: 'Test', noteContent: 'This is a test note.'),
+            NoteTile(
+              note: NoteModel(title: 'Test Title', content: 'Test Content'),
+            ),
           ],
         ),
       ),

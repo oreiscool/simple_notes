@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:simple_notes/models/notemodel.dart';
 
 class NoteTile extends StatelessWidget {
-  const NoteTile({
-    super.key,
-    required this.noteTitle,
-    required this.noteContent,
-  });
+  const NoteTile({super.key, required this.note});
 
-  final String noteTitle;
-  final String noteContent;
+  final NoteModel note;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +23,7 @@ class NoteTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              noteTitle,
+              note.title,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
@@ -35,8 +31,8 @@ class NoteTile extends StatelessWidget {
               ),
             ),
             Text(
-              noteContent,
-              style: TextStyle(fontSize: 17, color: Colors.black),
+              note.content,
+              style: TextStyle(fontSize: 16, color: Colors.black),
             ),
           ],
         ),
