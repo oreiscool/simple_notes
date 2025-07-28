@@ -14,7 +14,11 @@ class NoteTile extends StatelessWidget {
       width: 250,
       margin: EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary,
+        color: Colors.transparent,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary,
+          width: 3,
+        ),
         borderRadius: BorderRadius.all(Radius.circular(25)),
       ),
       child: Column(
@@ -26,14 +30,14 @@ class NoteTile extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
-              color: Theme.of(context).colorScheme.onPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           Text(
             note.content,
             style: TextStyle(
               fontSize: 16,
-              color: Theme.of(context).colorScheme.onPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ],

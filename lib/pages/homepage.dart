@@ -26,7 +26,12 @@ class _HomePageState extends State<HomePage> {
         width: 75,
         height: 75,
         child: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => NoteTaking()),
+            );
+          },
           child: const Icon(Icons.add),
         ),
       ),

@@ -1,5 +1,3 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
-class DataBase {
-  List notes = [];
-}
+class DataBase {}
