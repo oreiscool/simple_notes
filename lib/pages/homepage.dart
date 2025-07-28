@@ -32,9 +32,16 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Center(
         child: ListView(
+          padding: EdgeInsets.all(16),
           children: [
             NoteTile(
               note: NoteModel(title: 'Test Title', content: 'Test Content'),
+            ),
+            NoteTile(
+              note: NoteModel(title: 'Test Title 2', content: 'Test Content 2'),
+            ),
+            NoteTile(
+              note: NoteModel(title: 'Test Title 3', content: 'Test Content 3'),
             ),
           ],
         ),
