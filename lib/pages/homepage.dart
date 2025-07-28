@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:simple_notes/models/notemodel.dart';
 import 'package:simple_notes/widgets/notetile.dart';
 import 'package:simple_notes/pages/notetaking.dart';
 import 'package:simple_notes/data/database.dart';
@@ -12,6 +11,31 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final NotesDataBase db = NotesDataBase();
+
+  @override
+  void initState() {
+    db.loadData();
+    super.initState();
+  }
+
+  void createNewNote() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => NoteTaking()),
+    ).then((_) {
+      setState(() {
+        db.loadData();
+      });
+    });
+  }
+
+  void deleteNote(int index) {
+    setState(() {
+      db.deleteNote(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,30 +50,16 @@ class _HomePageState extends State<HomePage> {
         width: 75,
         height: 75,
         child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => NoteTaking()),
-            );
-          },
+          onPressed: createNewNote,
           child: const Icon(Icons.add),
         ),
       ),
-      body: Center(
-        child: ListView(
-          padding: EdgeInsets.all(16),
-          children: [
-            NoteTile(
-              note: NoteModel(title: 'Test Title', content: 'Test Content'),
-            ),
-            NoteTile(
-              note: NoteModel(title: 'Test Title 2', content: 'Test Content 2'),
-            ),
-            NoteTile(
-              note: NoteModel(title: 'Test Title 3', content: 'Test Content 3'),
-            ),
-          ],
-        ),
+      body: ListView.builder(
+        padding: EdgeInsets.all(16),
+        itemCount: db.notesList.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(child: NoteTile(note: db.notesList[index]));
+        },
       ),
     );
   }
