@@ -16,5 +16,6 @@ class NotesDataBase {
 
   void deleteNote(int index) {
     notesList.removeAt(index);
+    updateData();
   }
 }

@@ -33,11 +33,16 @@ class NoteTile extends StatelessWidget {
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          Text(
-            note.content,
-            style: TextStyle(
-              fontSize: 16,
-              color: Theme.of(context).colorScheme.onSurface,
+          SizedBox(height: 3),
+          Flexible(
+            child: Text(
+              note.content,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 16,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
           ),
         ],

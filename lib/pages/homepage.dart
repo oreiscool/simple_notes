@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simple_notes/models/notemodel.dart';
 import 'package:simple_notes/widgets/notetile.dart';
 import 'package:simple_notes/pages/notetaking.dart';
 import 'package:simple_notes/data/database.dart';
@@ -19,21 +20,23 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  void createNewNote() {
+  void goToNotePage({Note? note, int? index}) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => NoteTaking()),
-    ).then((_) {
-      setState(() {
-        db.loadData();
-      });
+      MaterialPageRoute(
+        builder: (context) => NoteTaking(note: note, noteIndex: index),
+      ),
+    ).then((value) {
+      if (value == true) {
+        setState(() {
+          db.loadData();
+        });
+      }
     });
   }
 
-  void deleteNote(int index) {
-    setState(() {
-      db.deleteNote(index);
-    });
+  void createNewNote() {
+    goToNotePage();
   }
 
   @override
@@ -58,7 +61,12 @@ class _HomePageState extends State<HomePage> {
         padding: EdgeInsets.all(16),
         itemCount: db.notesList.length,
         itemBuilder: (context, index) {
-          return GestureDetector(child: NoteTile(note: db.notesList[index]));
+          return GestureDetector(
+            onTap: () {
+              goToNotePage(note: db.notesList[index], index: index);
+            },
+            child: NoteTile(note: db.notesList[index]),
+          );
         },
       ),
     );

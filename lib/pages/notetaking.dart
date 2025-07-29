@@ -24,39 +24,46 @@ class _NoteTakingState extends State<NoteTaking> {
     }
   }
 
+  void saveOrUpdateNote() {
+    db.loadData();
+    String title = _titleController.text;
+    String content = _contentController.text;
+
+    if (widget.noteIndex != null) {
+      db.notesList[widget.noteIndex!] = Note(title: title, content: content);
+    } else {
+      db.notesList.add(Note(title: title, content: content));
+    }
+    db.updateData();
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Note Saved!')));
+    Navigator.pop(context, true);
+  }
+
+  void deleteNote() {
+    if (widget.noteIndex != null) {
+      db.loadData();
+      db.deleteNote(widget.noteIndex!);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Note Deleted!')));
+      Navigator.pop(context, true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         actions: [
           IconButton(
-            onPressed: () {
-              if (widget.noteIndex != null) {
-                db.loadData();
-                db.deleteNote(widget.noteIndex!);
-              }
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('Note Deleted!')));
-              Navigator.pop(context);
-            },
+            onPressed: deleteNote,
             icon: Icon(Icons.delete_outline_rounded),
           ),
-          SizedBox(width: 35),
+          SizedBox(width: 12),
           IconButton(
-            onPressed: () {
-              var newNote = Note(
-                title: _titleController.text,
-                content: _contentController.text,
-              );
-              db.loadData();
-              db.notesList.add(newNote);
-              db.updateData();
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('Note Saved!')));
-              Navigator.pop(context);
-            },
+            onPressed: saveOrUpdateNote,
             icon: Icon(Icons.save_alt_rounded),
           ),
         ],
@@ -70,7 +77,7 @@ class _NoteTakingState extends State<NoteTaking> {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
               decoration: InputDecoration(
                 border: InputBorder.none,
-                hint: Text('Title'),
+                hint: Text('Title...'),
               ),
             ),
             SizedBox(height: 8),
@@ -81,7 +88,7 @@ class _NoteTakingState extends State<NoteTaking> {
                 maxLines: null,
                 style: TextStyle(fontSize: 18),
                 decoration: InputDecoration(
-                  hint: Text('Type here...'),
+                  hint: Text('Content...'),
                   border: InputBorder.none,
                 ),
               ),
