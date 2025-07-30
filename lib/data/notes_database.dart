@@ -1,5 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:simple_notes/models/notemodel.dart';
+import 'package:simple_notes/models/note_model.dart';
 
 class NotesDataBase {
   List<Note> notesList = [];

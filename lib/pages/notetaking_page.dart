@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:simple_notes/data/database.dart';
-import 'package:simple_notes/models/notemodel.dart';
+import 'package:simple_notes/data/notes_database.dart';
+import 'package:simple_notes/models/note_model.dart';
 
-class NoteTaking extends StatefulWidget {
-  const NoteTaking({super.key, this.note, this.noteIndex});
+class NoteTakingPage extends StatefulWidget {
+  const NoteTakingPage({super.key, this.note, this.noteIndex});
   final Note? note;
   final int? noteIndex;
   @override
-  State<NoteTaking> createState() => _NoteTakingState();
+  State<NoteTakingPage> createState() => _NoteTakingState();
 }
 
-class _NoteTakingState extends State<NoteTaking> {
+class _NoteTakingState extends State<NoteTakingPage> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   final db = NotesDataBase();

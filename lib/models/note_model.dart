@@ -1,5 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
-part 'notemodel.g.dart';
+part 'note_model.g.dart';
 
 @HiveType(typeId: 0)
 class Note {

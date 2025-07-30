@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:simple_notes/models/notemodel.dart';
+import 'package:simple_notes/models/note_model.dart';
 
 class NoteTile extends StatelessWidget {
   const NoteTile({super.key, required this.note});

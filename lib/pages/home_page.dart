@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:simple_notes/models/notemodel.dart';
-import 'package:simple_notes/widgets/notetile.dart';
-import 'package:simple_notes/pages/notetaking.dart';
-import 'package:simple_notes/data/database.dart';
+import 'package:simple_notes/models/note_model.dart';
+import 'package:simple_notes/widgets/note_tile.dart';
+import 'package:simple_notes/pages/notetaking_page.dart';
+import 'package:simple_notes/data/notes_database.dart';
+import 'package:simple_notes/pages/settings_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,7 +25,7 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => NoteTaking(note: note, noteIndex: index),
+        builder: (context) => NoteTakingPage(note: note, noteIndex: index),
       ),
     ).then((value) {
       if (value == true) {
@@ -43,6 +44,17 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsPage()),
+              );
+            },
+            icon: Icon(Icons.settings),
+          ),
+        ],
         title: const Text(
           'Simple Notes',
           style: TextStyle(fontWeight: FontWeight.bold),
