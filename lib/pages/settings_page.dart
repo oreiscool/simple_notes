@@ -1,19 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:simple_notes/provider/theme_provider.dart';
 
-class SettingsPage extends StatefulWidget {
+class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
   @override
-  State<SettingsPage> createState() => _SettingsPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDarkMode = ref.watch(themeProvider) == ThemeMode.dark;
 
-class _SettingsPageState extends State<SettingsPage> {
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Settings', style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
+      ),
+      body: ListView(
+        children: [
+          SwitchListTile(
+            title: Text('Dark Mode'),
+            value: isDarkMode,
+            onChanged: (value) {
+              ref.read(themeProvider.notifier).toggleTheme();
+            },
+          ),
+        ],
       ),
     );
   }
