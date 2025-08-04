@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_notes/models/note_model.dart';
 import 'package:simple_notes/widgets/note_tile.dart';
 import 'package:simple_notes/pages/notetaking_page.dart';
-import 'package:simple_notes/data/notes_database.dart';
+import 'package:simple_notes/provider/notes_database_provider.dart';
 import 'package:simple_notes/pages/settings_page.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  final NotesDataBase db = NotesDataBase();
-
+class _HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
-    db.loadData();
     super.initState();
+    ref.read(notesDataBaseProvider).loadData();
   }
 
   void goToNotePage({Note? note, int? index}) {
@@ -30,7 +29,7 @@ class _HomePageState extends State<HomePage> {
     ).then((value) {
       if (value == true) {
         setState(() {
-          db.loadData();
+          ref.read(notesDataBaseProvider).loadData();
         });
       }
     });
@@ -42,6 +41,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final notesList = ref.read(notesDataBaseProvider).notesList;
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -71,15 +71,15 @@ class _HomePageState extends State<HomePage> {
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(16),
-        itemCount: db.notesList.length,
+        itemCount: notesList.length,
         itemBuilder: (context, index) {
           return NoteTile(
             onTap: () {
               Future.delayed(Duration(milliseconds: 100), () {
-                goToNotePage(note: db.notesList[index], index: index);
+                goToNotePage(note: notesList[index], index: index);
               });
             },
-            note: db.notesList[index],
+            note: notesList[index],
           );
         },
       ),

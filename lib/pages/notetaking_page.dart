@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:simple_notes/data/notes_database.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_notes/models/note_model.dart';
+import 'package:simple_notes/provider/notes_database_provider.dart';
 
-class NoteTakingPage extends StatefulWidget {
+class NoteTakingPage extends ConsumerStatefulWidget {
   const NoteTakingPage({super.key, this.note, this.noteIndex});
   final Note? note;
   final int? noteIndex;
   @override
-  State<NoteTakingPage> createState() => _NoteTakingState();
+  ConsumerState<NoteTakingPage> createState() => _NoteTakingState();
 }
 
-class _NoteTakingState extends State<NoteTakingPage> {
+class _NoteTakingState extends ConsumerState<NoteTakingPage> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
-  final db = NotesDataBase();
 
   @override
   void initState() {
@@ -25,6 +25,7 @@ class _NoteTakingState extends State<NoteTakingPage> {
   }
 
   void saveOrUpdateNote() {
+    final db = ref.read(notesDataBaseProvider);
     db.loadData();
     String title = _titleController.text;
     String content = _contentController.text;
@@ -42,6 +43,7 @@ class _NoteTakingState extends State<NoteTakingPage> {
   }
 
   void deleteNote() {
+    final db = ref.read(notesDataBaseProvider);
     if (widget.noteIndex != null) {
       db.loadData();
       db.deleteNote(widget.noteIndex!);
