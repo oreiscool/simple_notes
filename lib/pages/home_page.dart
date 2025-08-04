@@ -73,11 +73,13 @@ class _HomePageState extends State<HomePage> {
         padding: EdgeInsets.all(16),
         itemCount: db.notesList.length,
         itemBuilder: (context, index) {
-          return GestureDetector(
+          return NoteTile(
             onTap: () {
-              goToNotePage(note: db.notesList[index], index: index);
+              Future.delayed(Duration(milliseconds: 100), () {
+                goToNotePage(note: db.notesList[index], index: index);
+              });
             },
-            child: NoteTile(note: db.notesList[index]),
+            note: db.notesList[index],
           );
         },
       ),
