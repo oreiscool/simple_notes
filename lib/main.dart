@@ -9,6 +9,8 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(NoteAdapter());
   await Hive.openBox("notesBox");
+  await Hive.openBox("settingsBox");
+
   runApp(ProviderScope(child: MainApp()));
 }
 
