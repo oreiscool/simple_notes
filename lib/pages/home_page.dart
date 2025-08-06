@@ -5,6 +5,7 @@ import 'package:simple_notes/widgets/note_tile.dart';
 import 'package:simple_notes/pages/notetaking_page.dart';
 import 'package:simple_notes/provider/notes_database_provider.dart';
 import 'package:simple_notes/pages/settings_page.dart';
+import 'package:simple_notes/pages/search_page.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -44,6 +45,15 @@ class _HomePageState extends ConsumerState<HomePage> {
     final notesList = ref.read(notesDataBaseProvider).notesList;
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SearchPage()),
+            );
+          },
+          icon: Icon(Icons.search),
+        ),
         actions: [
           IconButton(
             onPressed: () {
