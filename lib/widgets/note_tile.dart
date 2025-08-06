@@ -37,11 +37,11 @@ class NoteTile extends StatelessWidget {
                   note.title,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 20,
+                    fontSize: 22,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
-                SizedBox(height: 3),
+                SizedBox(height: 2),
                 Flexible(
                   child: Text(
                     note.content,

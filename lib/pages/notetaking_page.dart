@@ -88,7 +88,7 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
                 controller: _contentController,
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 16),
                 decoration: InputDecoration(
                   hint: Text('Content...'),
                   border: InputBorder.none,

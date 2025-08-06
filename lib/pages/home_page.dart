@@ -75,6 +75,9 @@ class _HomePageState extends ConsumerState<HomePage> {
         width: 75,
         height: 75,
         child: FloatingActionButton(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           onPressed: createNewNote,
           child: const Icon(Icons.add),
         ),
