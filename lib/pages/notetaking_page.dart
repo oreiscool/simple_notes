@@ -75,7 +75,9 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
         child: Column(
           children: [
             TextField(
+              autofocus: widget.note == null,
               controller: _titleController,
+              textCapitalization: TextCapitalization.sentences,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
               decoration: InputDecoration(
                 border: InputBorder.none,
@@ -86,6 +88,7 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
             Expanded(
               child: TextField(
                 controller: _contentController,
+                textCapitalization: TextCapitalization.sentences,
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
                 style: TextStyle(fontSize: 16),
