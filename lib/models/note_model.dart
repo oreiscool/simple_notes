@@ -1,13 +1,10 @@
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:isar/isar.dart';
 part 'note_model.g.dart';
 
-@HiveType(typeId: 0)
+@Collection()
 class Note {
-  @HiveField(0)
-  final String title;
-
-  @HiveField(1)
-  final String content;
-
-  Note({required this.title, required this.content});
+  Id id = Isar.autoIncrement;
+  late String title;
+  late String content;
+  late DateTime lastModified;
 }

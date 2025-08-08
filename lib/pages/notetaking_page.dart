@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_notes/models/note_model.dart';
-import 'package:simple_notes/provider/notes_database_provider.dart';
+import 'package:simple_notes/provider/database_provider.dart';
 
 class NoteTakingPage extends ConsumerStatefulWidget {
-  const NoteTakingPage({super.key, this.note, this.noteIndex});
+  const NoteTakingPage({super.key, this.note});
   final Note? note;
-  final int? noteIndex;
   @override
   ConsumerState<NoteTakingPage> createState() => _NoteTakingState();
 }
@@ -24,29 +23,34 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
     }
   }
 
-  void saveOrUpdateNote() {
-    final db = ref.read(notesDataBaseProvider);
-    db.loadData();
-    String title = _titleController.text;
-    String content = _contentController.text;
+  void saveOrUpdateNote() async {
+    final db = ref.read(databaseProvider);
 
-    if (widget.noteIndex != null) {
-      db.notesList[widget.noteIndex!] = Note(title: title, content: content);
+    if (widget.note != null) {
+      final noteToUpdate = widget.note!;
+      noteToUpdate.title = _titleController.text;
+      noteToUpdate.content = _contentController.text;
+      noteToUpdate.lastModified = DateTime.now();
+      await db.updateNote(noteToUpdate);
     } else {
-      db.notesList.add(Note(title: title, content: content));
+      final newNote = Note()
+        ..title = _titleController.text
+        ..content = _contentController.text
+        ..lastModified = DateTime.now();
+      await db.createNote(newNote);
     }
-    db.updateData();
+    if (!mounted) return;
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Note Saved!')));
     Navigator.pop(context, true);
   }
 
-  void deleteNote() {
-    final db = ref.read(notesDataBaseProvider);
-    if (widget.noteIndex != null) {
-      db.loadData();
-      db.deleteNote(widget.noteIndex!);
+  Future<void> deleteNote() async {
+    final db = ref.read(databaseProvider);
+    if (widget.note != null) {
+      await db.deleteNote(widget.note!.id);
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Note Deleted!')));
@@ -81,7 +85,7 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
               decoration: InputDecoration(
                 border: InputBorder.none,
-                hint: Text('Title...'),
+                hint: Text('Title'),
               ),
             ),
             SizedBox(height: 8),
@@ -93,7 +97,7 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
                 maxLines: null,
                 style: TextStyle(fontSize: 16),
                 decoration: InputDecoration(
-                  hint: Text('Content...'),
+                  hint: Text('Content'),
                   border: InputBorder.none,
                 ),
               ),

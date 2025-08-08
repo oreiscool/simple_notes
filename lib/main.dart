@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:simple_notes/data/database_service.dart';
 import 'package:simple_notes/pages/home_page.dart';
-import 'package:simple_notes/models/note_model.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_notes/provider/theme_provider.dart';
 
 void main() async {
-  await Hive.initFlutter();
-  Hive.registerAdapter(NoteAdapter());
-  await Hive.openBox("notesBox");
-  await Hive.openBox("settingsBox");
+  WidgetsFlutterBinding.ensureInitialized();
+  await DatabaseService.initialize();
 
   runApp(ProviderScope(child: MainApp()));
 }
