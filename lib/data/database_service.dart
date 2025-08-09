@@ -1,6 +1,6 @@
 import 'package:path_provider/path_provider.dart';
 import 'package:simple_notes/models/note_model.dart';
-import 'package:isar/isar.dart';
+import 'drif';
 import 'package:simple_notes/models/settings_model.dart';
 
 class DatabaseService {
