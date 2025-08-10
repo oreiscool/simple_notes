@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:simple_notes/models/note_model.dart';
 import 'package:simple_notes/provider/database_provider.dart';
 import 'package:simple_notes/widgets/note_tile.dart';
 import 'package:simple_notes/pages/notetaking_page.dart';

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:simple_notes/data/database_service.dart';
+import 'package:flutter/services.dart';
 import 'package:simple_notes/pages/home_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_notes/provider/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await DatabaseService.initialize();
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+  );
 
   runApp(ProviderScope(child: MainApp()));
 }

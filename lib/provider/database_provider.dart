@@ -1,12 +1,26 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:simple_notes/data/database_service.dart';
-import 'package:simple_notes/models/note_model.dart';
+import 'package:simple_notes/data/database.dart';
 
-final databaseProvider = Provider<DatabaseService>((ref) {
-  return DatabaseService();
+final databaseProvider = Provider<AppDatabase>((ref) {
+  final database = AppDatabase();
+  ref.onDispose(() async {
+    await database.close();
+  });
+  return database;
 });
 
 final notesStreamProvider = StreamProvider<List<Note>>((ref) {
-  final dbService = ref.watch(databaseProvider);
-  return dbService.listenToNotes();
+  final database = ref.watch(databaseProvider);
+  return database.watchAllNotes();
+});
+
+final searchNotesProvider = FutureProvider.family<List<Note>, String>((
+  ref,
+  query,
+) {
+  if (query.trim().isEmpty) {
+    return Future.value(<Note>[]);
+  }
+  final database = ref.watch(databaseProvider);
+  return database.searchNotes(query.trim());
 });
