@@ -48,6 +48,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             );
           }
           return ListView.builder(
+            padding: EdgeInsets.all(16),
             itemCount: notes.length,
             itemBuilder: (context, index) {
               final note = notes[index];

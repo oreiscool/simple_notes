@@ -18,14 +18,14 @@ class SettingsPage extends ConsumerWidget {
       body: ListView(
         children: [
           SwitchListTile(
-            title: Text('Dark Mode'),
+            title: const Text('Dark Mode'),
             value: isDarkMode,
             onChanged: (value) {
               ref.read(settingsProvider.notifier).toggleTheme();
             },
           ),
           SwitchListTile(
-            title: Text('Auto Save'),
+            title: const Text('Auto Save'),
             value: isAutoSaveEnabled,
             onChanged: (value) {
               ref.read(settingsProvider.notifier).toggleAutoSave();

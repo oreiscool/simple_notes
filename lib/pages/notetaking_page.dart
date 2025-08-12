@@ -45,8 +45,28 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
   }
 
   Future<void> deleteNote() async {
-    final db = ref.read(databaseProvider);
-    if (widget.note != null) {
+    if (widget.note == null) {
+      return;
+    }
+    final bool? didConfirm = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text('Delete Note'),
+        content: Text('Are you sure you want to delete this note?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (didConfirm == true) {
+      final db = ref.read(databaseProvider);
       await db.deleteNote(widget.note!.id);
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -83,7 +103,7 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
               decoration: InputDecoration(
                 border: InputBorder.none,
-                hint: Text('Title'),
+                hint: const Text('Title'),
               ),
             ),
             SizedBox(height: 8),
@@ -95,7 +115,7 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
                 maxLines: null,
                 style: TextStyle(fontSize: 16),
                 decoration: InputDecoration(
-                  hint: Text('Content'),
+                  hint: const Text('Content'),
                   border: InputBorder.none,
                 ),
               ),
