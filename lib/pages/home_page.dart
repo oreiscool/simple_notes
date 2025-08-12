@@ -48,6 +48,7 @@ class HomePage extends ConsumerWidget {
             MaterialPageRoute(builder: (context) => const NoteTakingPage()),
           );
         },
+        child: const Icon(Icons.add),
       ),
       body: notesAsyncValue.when(
         data: (notes) {
@@ -56,6 +57,7 @@ class HomePage extends ConsumerWidget {
               child: Text(
                 "No notes yet.\nTap '+' to create one!",
                 textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18),
               ),
             );
           }
@@ -70,7 +72,7 @@ class HomePage extends ConsumerWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const NoteTakingPage(),
+                      builder: (context) => NoteTakingPage(note: note),
                     ),
                   );
                 },
@@ -78,7 +80,16 @@ class HomePage extends ConsumerWidget {
             },
           );
         },
-        error: (err, stack) => Center(child: Text('Error: $err')),
+        error: (err, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, color: Colors.red, size: 64),
+              const SizedBox(height: 16),
+              Text('Error: $err', style: TextStyle(fontSize: 16)),
+            ],
+          ),
+        ),
         loading: () => const Center(child: CircularProgressIndicator()),
       ),
     );

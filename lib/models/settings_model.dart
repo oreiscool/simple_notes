@@ -3,43 +3,40 @@ import 'package:simple_notes/data/database.dart';
 
 class SettingsModel {
   final bool isDarkMode;
-  final String defaultNoteTitle;
   final bool isAutoSaveEnabled;
-  final int autoSaveInterval;
 
-  const SettingsModel({
-    this.isDarkMode = false,
-    this.defaultNoteTitle = 'New Note',
-    this.isAutoSaveEnabled = true,
-    this.autoSaveInterval = 2,
-  });
+  const SettingsModel({this.isDarkMode = false, this.isAutoSaveEnabled = true});
 
   factory SettingsModel.fromDatabase(AppSetting dbSetting) {
-    return SettingsModel(isDarkMode: dbSetting.isDarkMode);
+    return SettingsModel(
+      isDarkMode: dbSetting.isDarkMode,
+      isAutoSaveEnabled: dbSetting.isAutoSaveEnabled,
+    );
   }
 
   SettingsCompanion toDatabaseCompanion() {
-    return SettingsCompanion(isDarkMode: Value(isDarkMode));
+    return SettingsCompanion(
+      isDarkMode: Value(isDarkMode),
+      isAutoSaveEnabled: Value(isAutoSaveEnabled),
+    );
   }
 
   AppSetting toDatabaseSetting(int id) {
-    return AppSetting(id: id, isDarkMode: isDarkMode);
+    return AppSetting(
+      id: id,
+      isDarkMode: isDarkMode,
+      isAutoSaveEnabled: isAutoSaveEnabled,
+    );
   }
 
-  SettingsModel copyWith({
-    bool? isDarkMode,
-    String? defaultNoteTitle,
-    bool? isAutoSaveEnabled,
-    int? autoSaveInterval,
-  }) {
+  SettingsModel copyWith({bool? isDarkMode, bool? isAutoSaveEnabled}) {
     return SettingsModel(
       isDarkMode: isDarkMode ?? this.isDarkMode,
-      defaultNoteTitle: defaultNoteTitle ?? this.defaultNoteTitle,
       isAutoSaveEnabled: isAutoSaveEnabled ?? this.isAutoSaveEnabled,
-      autoSaveInterval: autoSaveInterval ?? this.autoSaveInterval,
     );
   }
 
   @override
-  String toString() => 'SettingsModel(isDarkMode: $isDarkMode)';
+  String toString() =>
+      'SettingsModel(isDarkMode: $isDarkMode, isAutoSaveEnabled: $isAutoSaveEnabled)';
 }

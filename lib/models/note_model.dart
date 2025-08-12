@@ -6,7 +6,6 @@ class NoteModel {
   final String title;
   final String content;
   final DateTime lastModified;
-  final List<String> tags;
   final bool isPinned;
 
   NoteModel({
@@ -14,7 +13,6 @@ class NoteModel {
     required this.title,
     required this.content,
     required this.lastModified,
-    this.tags = const [],
     this.isPinned = false,
   });
 
@@ -25,7 +23,6 @@ class NoteModel {
       title: title,
       content: content,
       lastModified: now,
-      tags: const [],
       isPinned: false,
     );
   }
@@ -36,15 +33,16 @@ class NoteModel {
       title: dbNote.title,
       content: dbNote.content,
       lastModified: dbNote.lastModified,
+      isPinned: dbNote.isPinned,
     );
   }
-
   NotesCompanion toDatabaseCompanion() {
     return NotesCompanion(
       id: id == 0 ? const Value.absent() : Value(id),
       title: Value(title),
       content: Value(content),
       lastModified: Value(lastModified),
+      isPinned: Value(isPinned),
     );
   }
 
@@ -52,7 +50,6 @@ class NoteModel {
     String? title,
     String? content,
     DateTime? lastModified,
-    List<String>? tags,
     bool? isPinned,
   }) {
     return NoteModel(
@@ -60,7 +57,6 @@ class NoteModel {
       title: title ?? this.title,
       content: content ?? this.content,
       lastModified: lastModified ?? this.lastModified,
-      tags: tags ?? this.tags,
       isPinned: isPinned ?? this.isPinned,
     );
   }

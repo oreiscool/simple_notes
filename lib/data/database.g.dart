@@ -52,8 +52,29 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, Note> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _isPinnedMeta = const VerificationMeta(
+    'isPinned',
+  );
   @override
-  List<GeneratedColumn> get $columns => [id, title, content, lastModified];
+  late final GeneratedColumn<bool> isPinned = GeneratedColumn<bool>(
+    'is_pinned',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_pinned" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    title,
+    content,
+    lastModified,
+    isPinned,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -96,6 +117,12 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, Note> {
     } else if (isInserting) {
       context.missing(_lastModifiedMeta);
     }
+    if (data.containsKey('is_pinned')) {
+      context.handle(
+        _isPinnedMeta,
+        isPinned.isAcceptableOrUnknown(data['is_pinned']!, _isPinnedMeta),
+      );
+    }
     return context;
   }
 
@@ -121,6 +148,10 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, Note> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}last_modified'],
       )!,
+      isPinned: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_pinned'],
+      )!,
     );
   }
 
@@ -135,11 +166,13 @@ class Note extends DataClass implements Insertable<Note> {
   final String title;
   final String content;
   final DateTime lastModified;
+  final bool isPinned;
   const Note({
     required this.id,
     required this.title,
     required this.content,
     required this.lastModified,
+    required this.isPinned,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -148,6 +181,7 @@ class Note extends DataClass implements Insertable<Note> {
     map['title'] = Variable<String>(title);
     map['content'] = Variable<String>(content);
     map['last_modified'] = Variable<DateTime>(lastModified);
+    map['is_pinned'] = Variable<bool>(isPinned);
     return map;
   }
 
@@ -157,6 +191,7 @@ class Note extends DataClass implements Insertable<Note> {
       title: Value(title),
       content: Value(content),
       lastModified: Value(lastModified),
+      isPinned: Value(isPinned),
     );
   }
 
@@ -170,6 +205,7 @@ class Note extends DataClass implements Insertable<Note> {
       title: serializer.fromJson<String>(json['title']),
       content: serializer.fromJson<String>(json['content']),
       lastModified: serializer.fromJson<DateTime>(json['lastModified']),
+      isPinned: serializer.fromJson<bool>(json['isPinned']),
     );
   }
   @override
@@ -180,6 +216,7 @@ class Note extends DataClass implements Insertable<Note> {
       'title': serializer.toJson<String>(title),
       'content': serializer.toJson<String>(content),
       'lastModified': serializer.toJson<DateTime>(lastModified),
+      'isPinned': serializer.toJson<bool>(isPinned),
     };
   }
 
@@ -188,11 +225,13 @@ class Note extends DataClass implements Insertable<Note> {
     String? title,
     String? content,
     DateTime? lastModified,
+    bool? isPinned,
   }) => Note(
     id: id ?? this.id,
     title: title ?? this.title,
     content: content ?? this.content,
     lastModified: lastModified ?? this.lastModified,
+    isPinned: isPinned ?? this.isPinned,
   );
   Note copyWithCompanion(NotesCompanion data) {
     return Note(
@@ -202,6 +241,7 @@ class Note extends DataClass implements Insertable<Note> {
       lastModified: data.lastModified.present
           ? data.lastModified.value
           : this.lastModified,
+      isPinned: data.isPinned.present ? data.isPinned.value : this.isPinned,
     );
   }
 
@@ -211,13 +251,14 @@ class Note extends DataClass implements Insertable<Note> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('content: $content, ')
-          ..write('lastModified: $lastModified')
+          ..write('lastModified: $lastModified, ')
+          ..write('isPinned: $isPinned')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, title, content, lastModified);
+  int get hashCode => Object.hash(id, title, content, lastModified, isPinned);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -225,7 +266,8 @@ class Note extends DataClass implements Insertable<Note> {
           other.id == this.id &&
           other.title == this.title &&
           other.content == this.content &&
-          other.lastModified == this.lastModified);
+          other.lastModified == this.lastModified &&
+          other.isPinned == this.isPinned);
 }
 
 class NotesCompanion extends UpdateCompanion<Note> {
@@ -233,17 +275,20 @@ class NotesCompanion extends UpdateCompanion<Note> {
   final Value<String> title;
   final Value<String> content;
   final Value<DateTime> lastModified;
+  final Value<bool> isPinned;
   const NotesCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.content = const Value.absent(),
     this.lastModified = const Value.absent(),
+    this.isPinned = const Value.absent(),
   });
   NotesCompanion.insert({
     this.id = const Value.absent(),
     required String title,
     required String content,
     required DateTime lastModified,
+    this.isPinned = const Value.absent(),
   }) : title = Value(title),
        content = Value(content),
        lastModified = Value(lastModified);
@@ -252,12 +297,14 @@ class NotesCompanion extends UpdateCompanion<Note> {
     Expression<String>? title,
     Expression<String>? content,
     Expression<DateTime>? lastModified,
+    Expression<bool>? isPinned,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (content != null) 'content': content,
       if (lastModified != null) 'last_modified': lastModified,
+      if (isPinned != null) 'is_pinned': isPinned,
     });
   }
 
@@ -266,12 +313,14 @@ class NotesCompanion extends UpdateCompanion<Note> {
     Value<String>? title,
     Value<String>? content,
     Value<DateTime>? lastModified,
+    Value<bool>? isPinned,
   }) {
     return NotesCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
       content: content ?? this.content,
       lastModified: lastModified ?? this.lastModified,
+      isPinned: isPinned ?? this.isPinned,
     );
   }
 
@@ -290,6 +339,9 @@ class NotesCompanion extends UpdateCompanion<Note> {
     if (lastModified.present) {
       map['last_modified'] = Variable<DateTime>(lastModified.value);
     }
+    if (isPinned.present) {
+      map['is_pinned'] = Variable<bool>(isPinned.value);
+    }
     return map;
   }
 
@@ -299,7 +351,8 @@ class NotesCompanion extends UpdateCompanion<Note> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('content: $content, ')
-          ..write('lastModified: $lastModified')
+          ..write('lastModified: $lastModified, ')
+          ..write('isPinned: $isPinned')
           ..write(')'))
         .toString();
   }
@@ -339,8 +392,23 @@ class $SettingsTable extends Settings
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _isAutoSaveEnabledMeta = const VerificationMeta(
+    'isAutoSaveEnabled',
+  );
   @override
-  List<GeneratedColumn> get $columns => [id, isDarkMode];
+  late final GeneratedColumn<bool> isAutoSaveEnabled = GeneratedColumn<bool>(
+    'is_auto_save_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_auto_save_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, isDarkMode, isAutoSaveEnabled];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -365,6 +433,15 @@ class $SettingsTable extends Settings
         ),
       );
     }
+    if (data.containsKey('is_auto_save_enabled')) {
+      context.handle(
+        _isAutoSaveEnabledMeta,
+        isAutoSaveEnabled.isAcceptableOrUnknown(
+          data['is_auto_save_enabled']!,
+          _isAutoSaveEnabledMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -382,6 +459,10 @@ class $SettingsTable extends Settings
         DriftSqlType.bool,
         data['${effectivePrefix}is_dark_mode'],
       )!,
+      isAutoSaveEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_auto_save_enabled'],
+      )!,
     );
   }
 
@@ -394,17 +475,27 @@ class $SettingsTable extends Settings
 class AppSetting extends DataClass implements Insertable<AppSetting> {
   final int id;
   final bool isDarkMode;
-  const AppSetting({required this.id, required this.isDarkMode});
+  final bool isAutoSaveEnabled;
+  const AppSetting({
+    required this.id,
+    required this.isDarkMode,
+    required this.isAutoSaveEnabled,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['is_dark_mode'] = Variable<bool>(isDarkMode);
+    map['is_auto_save_enabled'] = Variable<bool>(isAutoSaveEnabled);
     return map;
   }
 
   SettingsCompanion toCompanion(bool nullToAbsent) {
-    return SettingsCompanion(id: Value(id), isDarkMode: Value(isDarkMode));
+    return SettingsCompanion(
+      id: Value(id),
+      isDarkMode: Value(isDarkMode),
+      isAutoSaveEnabled: Value(isAutoSaveEnabled),
+    );
   }
 
   factory AppSetting.fromJson(
@@ -415,6 +506,7 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
     return AppSetting(
       id: serializer.fromJson<int>(json['id']),
       isDarkMode: serializer.fromJson<bool>(json['isDarkMode']),
+      isAutoSaveEnabled: serializer.fromJson<bool>(json['isAutoSaveEnabled']),
     );
   }
   @override
@@ -423,17 +515,25 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'isDarkMode': serializer.toJson<bool>(isDarkMode),
+      'isAutoSaveEnabled': serializer.toJson<bool>(isAutoSaveEnabled),
     };
   }
 
-  AppSetting copyWith({int? id, bool? isDarkMode}) =>
-      AppSetting(id: id ?? this.id, isDarkMode: isDarkMode ?? this.isDarkMode);
+  AppSetting copyWith({int? id, bool? isDarkMode, bool? isAutoSaveEnabled}) =>
+      AppSetting(
+        id: id ?? this.id,
+        isDarkMode: isDarkMode ?? this.isDarkMode,
+        isAutoSaveEnabled: isAutoSaveEnabled ?? this.isAutoSaveEnabled,
+      );
   AppSetting copyWithCompanion(SettingsCompanion data) {
     return AppSetting(
       id: data.id.present ? data.id.value : this.id,
       isDarkMode: data.isDarkMode.present
           ? data.isDarkMode.value
           : this.isDarkMode,
+      isAutoSaveEnabled: data.isAutoSaveEnabled.present
+          ? data.isAutoSaveEnabled.value
+          : this.isAutoSaveEnabled,
     );
   }
 
@@ -441,46 +541,58 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
   String toString() {
     return (StringBuffer('AppSetting(')
           ..write('id: $id, ')
-          ..write('isDarkMode: $isDarkMode')
+          ..write('isDarkMode: $isDarkMode, ')
+          ..write('isAutoSaveEnabled: $isAutoSaveEnabled')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, isDarkMode);
+  int get hashCode => Object.hash(id, isDarkMode, isAutoSaveEnabled);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is AppSetting &&
           other.id == this.id &&
-          other.isDarkMode == this.isDarkMode);
+          other.isDarkMode == this.isDarkMode &&
+          other.isAutoSaveEnabled == this.isAutoSaveEnabled);
 }
 
 class SettingsCompanion extends UpdateCompanion<AppSetting> {
   final Value<int> id;
   final Value<bool> isDarkMode;
+  final Value<bool> isAutoSaveEnabled;
   const SettingsCompanion({
     this.id = const Value.absent(),
     this.isDarkMode = const Value.absent(),
+    this.isAutoSaveEnabled = const Value.absent(),
   });
   SettingsCompanion.insert({
     this.id = const Value.absent(),
     this.isDarkMode = const Value.absent(),
+    this.isAutoSaveEnabled = const Value.absent(),
   });
   static Insertable<AppSetting> custom({
     Expression<int>? id,
     Expression<bool>? isDarkMode,
+    Expression<bool>? isAutoSaveEnabled,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (isDarkMode != null) 'is_dark_mode': isDarkMode,
+      if (isAutoSaveEnabled != null) 'is_auto_save_enabled': isAutoSaveEnabled,
     });
   }
 
-  SettingsCompanion copyWith({Value<int>? id, Value<bool>? isDarkMode}) {
+  SettingsCompanion copyWith({
+    Value<int>? id,
+    Value<bool>? isDarkMode,
+    Value<bool>? isAutoSaveEnabled,
+  }) {
     return SettingsCompanion(
       id: id ?? this.id,
       isDarkMode: isDarkMode ?? this.isDarkMode,
+      isAutoSaveEnabled: isAutoSaveEnabled ?? this.isAutoSaveEnabled,
     );
   }
 
@@ -493,6 +605,9 @@ class SettingsCompanion extends UpdateCompanion<AppSetting> {
     if (isDarkMode.present) {
       map['is_dark_mode'] = Variable<bool>(isDarkMode.value);
     }
+    if (isAutoSaveEnabled.present) {
+      map['is_auto_save_enabled'] = Variable<bool>(isAutoSaveEnabled.value);
+    }
     return map;
   }
 
@@ -500,7 +615,8 @@ class SettingsCompanion extends UpdateCompanion<AppSetting> {
   String toString() {
     return (StringBuffer('SettingsCompanion(')
           ..write('id: $id, ')
-          ..write('isDarkMode: $isDarkMode')
+          ..write('isDarkMode: $isDarkMode, ')
+          ..write('isAutoSaveEnabled: $isAutoSaveEnabled')
           ..write(')'))
         .toString();
   }
@@ -524,6 +640,7 @@ typedef $$NotesTableCreateCompanionBuilder =
       required String title,
       required String content,
       required DateTime lastModified,
+      Value<bool> isPinned,
     });
 typedef $$NotesTableUpdateCompanionBuilder =
     NotesCompanion Function({
@@ -531,6 +648,7 @@ typedef $$NotesTableUpdateCompanionBuilder =
       Value<String> title,
       Value<String> content,
       Value<DateTime> lastModified,
+      Value<bool> isPinned,
     });
 
 class $$NotesTableFilterComposer extends Composer<_$AppDatabase, $NotesTable> {
@@ -558,6 +676,11 @@ class $$NotesTableFilterComposer extends Composer<_$AppDatabase, $NotesTable> {
 
   ColumnFilters<DateTime> get lastModified => $composableBuilder(
     column: $table.lastModified,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isPinned => $composableBuilder(
+    column: $table.isPinned,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -590,6 +713,11 @@ class $$NotesTableOrderingComposer
     column: $table.lastModified,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get isPinned => $composableBuilder(
+    column: $table.isPinned,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$NotesTableAnnotationComposer
@@ -614,6 +742,9 @@ class $$NotesTableAnnotationComposer
     column: $table.lastModified,
     builder: (column) => column,
   );
+
+  GeneratedColumn<bool> get isPinned =>
+      $composableBuilder(column: $table.isPinned, builder: (column) => column);
 }
 
 class $$NotesTableTableManager
@@ -648,11 +779,13 @@ class $$NotesTableTableManager
                 Value<String> title = const Value.absent(),
                 Value<String> content = const Value.absent(),
                 Value<DateTime> lastModified = const Value.absent(),
+                Value<bool> isPinned = const Value.absent(),
               }) => NotesCompanion(
                 id: id,
                 title: title,
                 content: content,
                 lastModified: lastModified,
+                isPinned: isPinned,
               ),
           createCompanionCallback:
               ({
@@ -660,11 +793,13 @@ class $$NotesTableTableManager
                 required String title,
                 required String content,
                 required DateTime lastModified,
+                Value<bool> isPinned = const Value.absent(),
               }) => NotesCompanion.insert(
                 id: id,
                 title: title,
                 content: content,
                 lastModified: lastModified,
+                isPinned: isPinned,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -689,9 +824,17 @@ typedef $$NotesTableProcessedTableManager =
       PrefetchHooks Function()
     >;
 typedef $$SettingsTableCreateCompanionBuilder =
-    SettingsCompanion Function({Value<int> id, Value<bool> isDarkMode});
+    SettingsCompanion Function({
+      Value<int> id,
+      Value<bool> isDarkMode,
+      Value<bool> isAutoSaveEnabled,
+    });
 typedef $$SettingsTableUpdateCompanionBuilder =
-    SettingsCompanion Function({Value<int> id, Value<bool> isDarkMode});
+    SettingsCompanion Function({
+      Value<int> id,
+      Value<bool> isDarkMode,
+      Value<bool> isAutoSaveEnabled,
+    });
 
 class $$SettingsTableFilterComposer
     extends Composer<_$AppDatabase, $SettingsTable> {
@@ -709,6 +852,11 @@ class $$SettingsTableFilterComposer
 
   ColumnFilters<bool> get isDarkMode => $composableBuilder(
     column: $table.isDarkMode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isAutoSaveEnabled => $composableBuilder(
+    column: $table.isAutoSaveEnabled,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -731,6 +879,11 @@ class $$SettingsTableOrderingComposer
     column: $table.isDarkMode,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get isAutoSaveEnabled => $composableBuilder(
+    column: $table.isAutoSaveEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$SettingsTableAnnotationComposer
@@ -747,6 +900,11 @@ class $$SettingsTableAnnotationComposer
 
   GeneratedColumn<bool> get isDarkMode => $composableBuilder(
     column: $table.isDarkMode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isAutoSaveEnabled => $composableBuilder(
+    column: $table.isAutoSaveEnabled,
     builder: (column) => column,
   );
 }
@@ -784,12 +942,22 @@ class $$SettingsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<bool> isDarkMode = const Value.absent(),
-              }) => SettingsCompanion(id: id, isDarkMode: isDarkMode),
+                Value<bool> isAutoSaveEnabled = const Value.absent(),
+              }) => SettingsCompanion(
+                id: id,
+                isDarkMode: isDarkMode,
+                isAutoSaveEnabled: isAutoSaveEnabled,
+              ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 Value<bool> isDarkMode = const Value.absent(),
-              }) => SettingsCompanion.insert(id: id, isDarkMode: isDarkMode),
+                Value<bool> isAutoSaveEnabled = const Value.absent(),
+              }) => SettingsCompanion.insert(
+                id: id,
+                isDarkMode: isDarkMode,
+                isAutoSaveEnabled: isAutoSaveEnabled,
+              ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),

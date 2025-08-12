@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:simple_notes/data/database.dart';
+import 'package:simple_notes/models/note_model.dart';
 import 'package:simple_notes/provider/database_provider.dart';
 
 class NoteTakingPage extends ConsumerStatefulWidget {
-  const NoteTakingPage({super.key, this.note});
-  final Note? note;
+  const NoteTakingPage({this.note, super.key});
+  final NoteModel? note;
   @override
   ConsumerState<NoteTakingPage> createState() => _NoteTakingState();
 }
@@ -25,19 +25,17 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
 
   void saveOrUpdateNote() async {
     final db = ref.read(databaseProvider);
+    final title = _titleController.text;
+    final content = _contentController.text;
 
-    if (widget.note != null) {
-      final noteToUpdate = widget.note!;
-      noteToUpdate.title = _titleController.text;
-      noteToUpdate.content = _contentController.text;
-      noteToUpdate.lastModified = DateTime.now();
-      await db.updateNote(noteToUpdate);
+    if (title.trim().isEmpty && content.trim().isEmpty) {
+      Navigator.pop(context);
+      return;
+    }
+    if (widget.note == null) {
+      await db.createNote(title: title, content: content);
     } else {
-      final newNote = Note()
-        ..title = _titleController.text
-        ..content = _contentController.text
-        ..lastModified = DateTime.now();
-      await db.createNote(newNote);
+      await db.updateNote(id: widget.note!.id, title: title, content: content);
     }
     if (!mounted) return;
     ScaffoldMessenger.of(

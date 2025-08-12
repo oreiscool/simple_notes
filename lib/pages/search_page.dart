@@ -12,35 +12,19 @@ class SearchPage extends ConsumerStatefulWidget {
 }
 
 class _SearchPageState extends ConsumerState<SearchPage> {
-  final _searchController = TextEditingController();
-  List<Note> _searchResults = [];
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  void searchNotes(String query) async {
-    final db = ref.read(databaseProvider);
-    if (query.isEmpty) {
-      setState(() {
-        _searchResults = [];
-      });
-      return;
-    }
-    final results = await db.searchNotes(query);
-    setState(() {
-      _searchResults = results;
-    });
-  }
+  String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
+    final searchResults = ref.watch(searchNotesProvider(_searchQuery));
     return Scaffold(
       appBar: AppBar(
         title: TextField(
-          onChanged: searchNotes,
-          controller: _searchController,
+          onChanged: (query) {
+            setState(() {
+              _searchQuery = query;
+            });
+          },
           autofocus: true,
           decoration: InputDecoration(
             hintText: 'Search...',
@@ -48,23 +32,41 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           ),
         ),
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(16),
-        itemCount: _searchResults.length,
-        itemBuilder: (context, index) {
-          final note = _searchResults[index];
-          return NoteTile(
-            note: note,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NoteTakingPage(note: note),
-                ),
+      body: searchResults.when(
+        data: (notes) {
+          if (notes.isEmpty && _searchQuery.isNotEmpty) {
+            return const Center(
+              child: Text('No results found.', style: TextStyle(fontSize: 18)),
+            );
+          }
+          if (notes.isEmpty) {
+            return const Center(
+              child: Text(
+                'Start typing to search notes.',
+                style: TextStyle(fontSize: 18),
+              ),
+            );
+          }
+          return ListView.builder(
+            itemCount: notes.length,
+            itemBuilder: (context, index) {
+              final note = notes[index];
+              return NoteTile(
+                note: note,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NoteTakingPage(note: note),
+                    ),
+                  );
+                },
               );
             },
           );
         },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, stack) => Center(child: Text('Error: $err')),
       ),
     );
   }
