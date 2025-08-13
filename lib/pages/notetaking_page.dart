@@ -13,17 +13,19 @@ class NoteTakingPage extends ConsumerStatefulWidget {
 class _NoteTakingState extends ConsumerState<NoteTakingPage> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
+  NoteModel? _currentNote;
 
   @override
   void initState() {
     super.initState();
-    if (widget.note != null) {
+    _currentNote = widget.note;
+    if (_currentNote != null) {
       _titleController.text = widget.note!.title;
       _contentController.text = widget.note!.content;
     }
   }
 
-  void saveOrUpdateNote() async {
+  Future<void> saveOrUpdateNote() async {
     final db = ref.read(databaseProvider);
     final title = _titleController.text;
     final content = _contentController.text;
@@ -45,7 +47,7 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
   }
 
   Future<void> deleteNote() async {
-    if (widget.note == null) {
+    if (_currentNote == null) {
       return;
     }
     final bool? didConfirm = await showDialog<bool>(
@@ -76,6 +78,31 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
     }
   }
 
+  Future<void> pinNote() async {
+    if (widget.note == null) {
+      return;
+    }
+    final db = ref.read(databaseProvider);
+    final updatedNote = widget.note!.copyWith(
+      isPinned: !_currentNote!.isPinned,
+    );
+    await db.updateNote(
+      id: updatedNote.id,
+      title: updatedNote.title,
+      content: updatedNote.content,
+      isPinned: updatedNote.isPinned,
+    );
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(updatedNote.isPinned ? 'Note Pinned!' : 'Note Unpinned!'),
+      ),
+    );
+    setState(() {
+      _currentNote = updatedNote;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,7 +112,14 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
             onPressed: deleteNote,
             icon: Icon(Icons.delete_outline_rounded),
           ),
-          SizedBox(width: 12),
+          IconButton(
+            onPressed: pinNote,
+            icon: Icon(
+              _currentNote?.isPinned ?? false
+                  ? Icons.push_pin_rounded
+                  : Icons.push_pin_outlined,
+            ),
+          ),
           IconButton(
             onPressed: saveOrUpdateNote,
             icon: Icon(Icons.save_alt_rounded),
