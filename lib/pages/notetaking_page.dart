@@ -13,13 +13,11 @@ class NoteTakingPage extends ConsumerStatefulWidget {
 class _NoteTakingState extends ConsumerState<NoteTakingPage> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
-  NoteModel? _currentNote;
 
   @override
   void initState() {
     super.initState();
-    _currentNote = widget.note;
-    if (_currentNote != null) {
+    if (widget.note != null) {
       _titleController.text = widget.note!.title;
       _contentController.text = widget.note!.content;
     }
@@ -47,7 +45,7 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
   }
 
   Future<void> deleteNote() async {
-    if (_currentNote == null) {
+    if (widget.note == null) {
       return;
     }
     final bool? didConfirm = await showDialog<bool>(
@@ -82,29 +80,21 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
     if (widget.note == null) {
       return;
     }
-    final db = ref.read(databaseProvider);
-    final updatedNote = widget.note!.copyWith(
-      isPinned: !_currentNote!.isPinned,
-    );
-    await db.updateNote(
-      id: updatedNote.id,
-      title: updatedNote.title,
-      content: updatedNote.content,
-      isPinned: updatedNote.isPinned,
-    );
+    await ref.read(databaseProvider).toggleNotePin(widget.note!.id);
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(updatedNote.isPinned ? 'Note Pinned!' : 'Note Unpinned!'),
+        content: Text(
+          !widget.note!.isPinned ? 'Note Unpinned!' : 'Note Pinned!',
+        ),
       ),
     );
-    setState(() {
-      _currentNote = updatedNote;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final noteAsyncValue = ref.watch(singleNoteProvider(widget.note?.id ?? 0));
+    final currentNote = noteAsyncValue.asData?.value;
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -115,7 +105,7 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
           IconButton(
             onPressed: pinNote,
             icon: Icon(
-              _currentNote?.isPinned ?? false
+              currentNote?.isPinned ?? false
                   ? Icons.push_pin_rounded
                   : Icons.push_pin_outlined,
             ),

@@ -61,6 +61,10 @@ class AppDatabase extends _$AppDatabase {
         .watch();
   }
 
+  Stream<Note?> watchSingleNote(int id) {
+    return (select(notes)..where((n) => n.id.equals(id))).watchSingleOrNull();
+  }
+
   Future<int> createNote({
     required String title,
     required String content,

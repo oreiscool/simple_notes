@@ -20,6 +20,15 @@ final notesStreamProvider = StreamProvider<List<NoteModel>>((ref) {
   });
 });
 
+final singleNoteProvider = StreamProvider.family<NoteModel?, int>((ref, id) {
+  final database = ref.watch(databaseProvider);
+  final rawNoteStream = database.watchSingleNote(id);
+  return rawNoteStream.map((rawNote) {
+    if (rawNote == null) return null;
+    return NoteModel.fromDatabase(rawNote);
+  });
+});
+
 final searchNotesProvider = FutureProvider.family<List<NoteModel>, String>((
   ref,
   query,
