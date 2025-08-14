@@ -4,26 +4,18 @@ import 'package:simple_notes/provider/database_provider.dart';
 import 'package:simple_notes/widgets/note_tile.dart';
 import 'package:simple_notes/pages/notetaking_page.dart';
 
-class SearchPage extends ConsumerStatefulWidget {
+class SearchPage extends ConsumerWidget {
   const SearchPage({super.key});
 
   @override
-  ConsumerState<SearchPage> createState() => _SearchPageState();
-}
-
-class _SearchPageState extends ConsumerState<SearchPage> {
-  String _searchQuery = '';
-
-  @override
-  Widget build(BuildContext context) {
-    final searchResults = ref.watch(searchNotesProvider(_searchQuery));
+  Widget build(BuildContext context, WidgetRef ref) {
+    final searchResults = ref.watch(searchNotesProvider);
+    final currentQuery = ref.watch(searchQueryProvider);
     return Scaffold(
       appBar: AppBar(
         title: TextField(
           onChanged: (query) {
-            setState(() {
-              _searchQuery = query;
-            });
+            ref.read(searchQueryProvider.notifier).updateQuery(query);
           },
           autofocus: true,
           decoration: InputDecoration(
@@ -34,7 +26,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
       ),
       body: searchResults.when(
         data: (notes) {
-          if (notes.isEmpty && _searchQuery.isNotEmpty) {
+          if (notes.isEmpty && currentQuery.isNotEmpty) {
             return const Center(
               child: Text('No results found.', style: TextStyle(fontSize: 18)),
             );

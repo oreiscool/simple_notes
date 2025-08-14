@@ -29,13 +29,25 @@ final singleNoteProvider = StreamProvider.family<NoteModel?, int>((ref, id) {
   });
 });
 
-final searchNotesProvider = FutureProvider.family<List<NoteModel>, String>((
-  ref,
-  query,
-) async {
-  if (query.trim().isEmpty) {
-    return Future.value(<NoteModel>[]);
+class SearchQueryNotfier extends Notifier<String> {
+  @override
+  String build() => '';
+
+  void updateQuery(String query) {
+    state = query;
   }
+}
+
+final searchQueryProvider = NotifierProvider<SearchQueryNotfier, String>(() {
+  return SearchQueryNotfier();
+});
+
+final searchNotesProvider = FutureProvider<List<NoteModel>>((ref) async {
+  final query = ref.watch(searchQueryProvider);
+  if (query.trim().isEmpty) {
+    return [];
+  }
+  await Future.delayed(const Duration(milliseconds: 500));
   final database = ref.watch(databaseProvider);
   final rawNotesList = await database.searchNotes(query.trim());
   return [for (final rawNote in rawNotesList) NoteModel.fromDatabase(rawNote)];
