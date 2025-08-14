@@ -142,13 +142,14 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
     if (widget.note == null) {
       return;
     }
+    final currentPinStatus =
+        ref.read(singleNoteProvider(widget.note!.id)).asData?.value?.isPinned ??
+        widget.note!.isPinned;
     await ref.read(databaseProvider).toggleNotePin(widget.note!.id);
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          !widget.note!.isPinned ? 'Note Unpinned!' : 'Note Pinned!',
-        ),
+        content: Text(currentPinStatus ? 'Note Unpinned!' : 'Note Pinned!'),
       ),
     );
   }

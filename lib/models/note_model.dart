@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:simple_notes/data/database.dart';
+import 'package:intl/intl.dart';
 
 class NoteModel {
   final int id;
@@ -65,6 +66,24 @@ class NoteModel {
   bool get hasContent => !isEmpty;
   String get preview =>
       content.length > 100 ? '${content.substring(0, 100)}...' : content;
+  String get formattedLastModified {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final lastModifiedDate = DateTime(
+      this.lastModified.year,
+      this.lastModified.month,
+      this.lastModified.day,
+    );
+    if (lastModifiedDate == today) {
+      return DateFormat.jm().format(lastModified);
+    } else if (now.difference(lastModified).inDays < 7) {
+      return DateFormat.E().format(lastModified);
+    } else if (lastModified.year == now.year) {
+      return DateFormat('MMM d').format(lastModified);
+    } else {
+      return DateFormat('MMM d, y').format(lastModified);
+    }
+  }
 
   @override
   String toString() => 'NoteModel(id: $id, title: $title)';
