@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_notes/models/note_model.dart';
 import 'package:simple_notes/provider/database_provider.dart';
+import 'package:simple_notes/provider/settings_provider.dart';
 
 class NoteTakingPage extends ConsumerStatefulWidget {
   const NoteTakingPage({this.note, super.key});
@@ -13,18 +15,74 @@ class NoteTakingPage extends ConsumerStatefulWidget {
 class _NoteTakingState extends ConsumerState<NoteTakingPage> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
-
+  Timer? _autoSaveTimer;
+  int? _currentNoteId;
+  String _lastSavedTitle = '';
+  String _lastSavedContent = '';
   @override
   void initState() {
     super.initState();
     if (widget.note != null) {
       _titleController.text = widget.note!.title;
       _contentController.text = widget.note!.content;
+      _currentNoteId = widget.note!.id;
+      _lastSavedTitle = widget.note!.title;
+      _lastSavedContent = widget.note!.content;
+    }
+    _titleController.addListener(_onTextChanged);
+    _contentController.addListener(_onTextChanged);
+  }
+
+  @override
+  void dispose() {
+    _autoSaveTimer?.cancel();
+    _titleController.removeListener(_onTextChanged);
+    _contentController.removeListener(_onTextChanged);
+    _titleController.dispose();
+    _contentController.dispose();
+    super.dispose();
+  }
+
+  void _onTextChanged() {
+    final isAutoSaveEnabled = ref.read(autoSaveProvider);
+    if (!isAutoSaveEnabled) return;
+
+    _autoSaveTimer?.cancel();
+    _autoSaveTimer = Timer(const Duration(seconds: 2), _performAutoSave);
+  }
+
+  Future<void> _performAutoSave() async {
+    final title = _titleController.text;
+    final content = _contentController.text;
+
+    if ((title == _lastSavedTitle && content == _lastSavedContent) ||
+        (title.isEmpty && content.isEmpty)) {
+      return;
+    }
+
+    try {
+      final database = ref.read(databaseProvider);
+      if (_currentNoteId == null) {
+        _currentNoteId = await database.createNote(
+          title: title,
+          content: content,
+        );
+      } else {
+        await database.updateNote(
+          id: _currentNoteId!,
+          title: title,
+          content: content,
+        );
+      }
+      _lastSavedTitle = title;
+      _lastSavedContent = content;
+    } catch (e) {
+      debugPrint('Auto-save failed: $e');
     }
   }
 
   Future<void> saveOrUpdateNote() async {
-    final db = ref.read(databaseProvider);
+    final database = ref.read(databaseProvider);
     final title = _titleController.text;
     final content = _contentController.text;
 
@@ -33,9 +91,13 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
       return;
     }
     if (widget.note == null) {
-      await db.createNote(title: title, content: content);
+      await database.createNote(title: title, content: content);
     } else {
-      await db.updateNote(id: widget.note!.id, title: title, content: content);
+      await database.updateNote(
+        id: widget.note!.id,
+        title: title,
+        content: content,
+      );
     }
     if (!mounted) return;
     ScaffoldMessenger.of(
@@ -66,8 +128,8 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
       ),
     );
     if (didConfirm == true) {
-      final db = ref.read(databaseProvider);
-      await db.deleteNote(widget.note!.id);
+      final database = ref.read(databaseProvider);
+      await database.deleteNote(widget.note!.id);
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,

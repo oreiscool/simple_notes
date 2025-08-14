@@ -147,12 +147,9 @@ class AppDatabase extends _$AppDatabase {
       )..where((n) => n.id.equals(id))).getSingleOrNull();
       if (note == null) return false;
       final newPinStatus = !note.isPinned;
-      return await updateNote(
-        id: id,
-        title: note.title,
-        content: note.content,
-        isPinned: newPinStatus,
-      );
+      final rowsAffected = await (update(notes)..where((n) => n.id.equals(id)))
+          .write(NotesCompanion(isPinned: Value(newPinStatus)));
+      return rowsAffected > 0;
     } catch (e) {
       rethrow;
     }

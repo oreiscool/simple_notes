@@ -81,7 +81,7 @@ class _NoteTileState extends State<NoteTile> {
                 SizedBox(height: 2),
                 Flexible(
                   child: Text(
-                    widget.note.content,
+                    widget.note.preview,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
