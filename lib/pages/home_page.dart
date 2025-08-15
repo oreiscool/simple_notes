@@ -5,6 +5,7 @@ import 'package:simple_notes/pages/notetaking_page.dart';
 import 'package:simple_notes/provider/database_provider.dart';
 import 'package:simple_notes/pages/settings_page.dart';
 import 'package:simple_notes/pages/search_page.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -18,7 +19,7 @@ class HomePage extends ConsumerWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SearchPage()),
+              MaterialPageRoute(builder: (context) => const SearchPage()),
             );
           },
           icon: Icon(Icons.search),
@@ -28,19 +29,15 @@ class HomePage extends ConsumerWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SettingsPage()),
+                MaterialPageRoute(builder: (context) => const SettingsPage()),
               );
             },
             icon: Icon(Icons.settings),
           ),
         ],
-        title: const Text(
-          'Simple Notes',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'create_note',
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         onPressed: () {
           Navigator.push(
@@ -61,18 +58,23 @@ class HomePage extends ConsumerWidget {
               ),
             );
           }
-          return ListView.builder(
-            padding: EdgeInsets.all(16),
+          return MasonryGridView.count(
+            crossAxisCount: 2,
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            padding: const EdgeInsets.all(16),
             itemCount: notes.length,
             itemBuilder: (context, index) {
               final note = notes[index];
               return NoteTile(
+                heroTagPrefix: 'home',
                 note: note,
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => NoteTakingPage(note: note),
+                      builder: (context) =>
+                          NoteTakingPage(note: note, heroTagPrefix: 'home'),
                     ),
                   );
                 },

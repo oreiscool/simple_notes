@@ -29,7 +29,7 @@ final singleNoteProvider = StreamProvider.family<NoteModel?, int>((ref, id) {
   });
 });
 
-class SearchQueryNotfier extends Notifier<String> {
+class SearchQueryNotifier extends Notifier<String> {
   @override
   String build() => '';
 
@@ -38,11 +38,14 @@ class SearchQueryNotfier extends Notifier<String> {
   }
 }
 
-final searchQueryProvider = NotifierProvider<SearchQueryNotfier, String>(() {
-  return SearchQueryNotfier();
-});
+final searchQueryProvider =
+    NotifierProvider.autoDispose<SearchQueryNotifier, String>(() {
+      return SearchQueryNotifier();
+    });
 
-final searchNotesProvider = FutureProvider<List<NoteModel>>((ref) async {
+final searchNotesProvider = FutureProvider.autoDispose<List<NoteModel>>((
+  ref,
+) async {
   final query = ref.watch(searchQueryProvider);
   if (query.trim().isEmpty) {
     return [];

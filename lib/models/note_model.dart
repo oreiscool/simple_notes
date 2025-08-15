@@ -70,9 +70,9 @@ class NoteModel {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final lastModifiedDate = DateTime(
-      this.lastModified.year,
-      this.lastModified.month,
-      this.lastModified.day,
+      lastModified.year,
+      lastModified.month,
+      lastModified.day,
     );
     if (lastModifiedDate == today) {
       return DateFormat.jm().format(lastModified);

@@ -6,8 +6,9 @@ import 'package:simple_notes/provider/database_provider.dart';
 import 'package:simple_notes/provider/settings_provider.dart';
 
 class NoteTakingPage extends ConsumerStatefulWidget {
-  const NoteTakingPage({this.note, super.key});
+  const NoteTakingPage({this.heroTagPrefix, this.note, super.key});
   final NoteModel? note;
+  final String? heroTagPrefix;
   @override
   ConsumerState<NoteTakingPage> createState() => _NoteTakingState();
 }
@@ -48,7 +49,7 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
     if (!isAutoSaveEnabled) return;
 
     _autoSaveTimer?.cancel();
-    _autoSaveTimer = Timer(const Duration(seconds: 2), _performAutoSave);
+    _autoSaveTimer = Timer(const Duration(milliseconds: 500), _performAutoSave);
   }
 
   Future<void> _performAutoSave() async {
@@ -158,6 +159,9 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
   Widget build(BuildContext context) {
     final noteAsyncValue = ref.watch(singleNoteProvider(widget.note?.id ?? 0));
     final currentNote = noteAsyncValue.asData?.value;
+    final heroTag = widget.note?.id != null
+        ? '${widget.heroTagPrefix}_${widget.note!.id}'
+        : 'create_note';
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -179,35 +183,42 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            TextField(
-              autofocus: widget.note == null,
-              controller: _titleController,
-              textCapitalization: TextCapitalization.sentences,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hint: const Text('Title'),
-              ),
-            ),
-            SizedBox(height: 8),
-            Expanded(
-              child: TextField(
-                controller: _contentController,
-                textCapitalization: TextCapitalization.sentences,
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                style: TextStyle(fontSize: 16),
-                decoration: InputDecoration(
-                  hint: const Text('Content'),
-                  border: InputBorder.none,
+      body: Hero(
+        tag: heroTag,
+        child: Material(
+          type: MaterialType.card,
+          color: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                TextField(
+                  autofocus: widget.note == null,
+                  controller: _titleController,
+                  textCapitalization: TextCapitalization.sentences,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hint: const Text('Title'),
+                  ),
                 ),
-              ),
+                SizedBox(height: 8),
+                Expanded(
+                  child: TextField(
+                    controller: _contentController,
+                    textCapitalization: TextCapitalization.sentences,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    style: TextStyle(fontSize: 16),
+                    decoration: InputDecoration(
+                      hint: const Text('Content'),
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

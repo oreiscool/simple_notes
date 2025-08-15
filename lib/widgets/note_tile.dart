@@ -2,60 +2,56 @@ import 'package:flutter/material.dart';
 import 'package:simple_notes/models/note_model.dart';
 
 class NoteTile extends StatelessWidget {
-  const NoteTile({super.key, required this.note, this.onTap});
+  const NoteTile({
+    super.key,
+    required this.note,
+    this.onTap,
+    required this.heroTagPrefix,
+  });
 
   final NoteModel note;
   final void Function()? onTap;
-
-  Future<void> pinnedNote() async {
-    if (note.isPinned == true) {
-      return;
-    }
-  }
-
-  Future<void> unpinnedNote() async {
-    if (note.isPinned == false) {
-      return;
-    }
-  }
+  final String heroTagPrefix;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 16.0),
+    return Hero(
+      tag: '${heroTagPrefix}_${note.id}',
       child: Material(
         color: Colors.transparent,
         clipBehavior: Clip.antiAlias,
         child: InkWell(
-          borderRadius: BorderRadius.all(Radius.circular(25)),
+          borderRadius: const BorderRadius.all(Radius.circular(25)),
           onTap: onTap,
           child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: 125),
+            constraints: const BoxConstraints(minHeight: 125),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.transparent,
                 border: Border.all(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 3,
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1,
                 ),
-                borderRadius: BorderRadius.all(Radius.circular(25)),
+                borderRadius: const BorderRadius.all(Radius.circular(15)),
               ),
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Text(
-                        note.title,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22,
-                          color: Theme.of(context).colorScheme.onSurface,
+                      Expanded(
+                        child: Text(
+                          note.title,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                          maxLines: 3,
                         ),
                       ),
-                      Spacer(),
                       if (note.isPinned)
                         Icon(
                           Icons.push_pin_rounded,
@@ -64,10 +60,10 @@ class NoteTile extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 8),
-                  Expanded(
+                  Flexible(
                     child: Text(
                       note.preview,
-                      maxLines: 3,
+                      maxLines: 10,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 16,

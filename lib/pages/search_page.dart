@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_notes/provider/database_provider.dart';
 import 'package:simple_notes/widgets/note_tile.dart';
 import 'package:simple_notes/pages/notetaking_page.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class SearchPage extends ConsumerWidget {
   const SearchPage({super.key});
@@ -39,18 +40,23 @@ class SearchPage extends ConsumerWidget {
               ),
             );
           }
-          return ListView.builder(
-            padding: EdgeInsets.all(16),
+          return MasonryGridView.count(
+            crossAxisCount: 2,
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            padding: const EdgeInsets.all(16),
             itemCount: notes.length,
             itemBuilder: (context, index) {
               final note = notes[index];
               return NoteTile(
+                heroTagPrefix: 'search',
                 note: note,
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => NoteTakingPage(note: note),
+                      builder: (context) =>
+                          NoteTakingPage(note: note, heroTagPrefix: 'search'),
                     ),
                   );
                 },
