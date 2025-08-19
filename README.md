@@ -1,5 +1,10 @@
 # Simple Notes
 
+![Flutter](https://img.shields.io/badge/Flutter-3.35.1-02569B?style=for-the-badge&logo=flutter)
+![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
+![Platform](https://img.shields.io/badge/Platform-Android-green?style=for-the-badge&logo=android)
+
 A clean, minimalist note-taking app built with Flutter. Perfect for quick thoughts, ideas, and reminders.
 
 ## Features
@@ -14,7 +19,17 @@ A clean, minimalist note-taking app built with Flutter. Perfect for quick though
 
 ## Screenshots
 
-*Screenshots coming soon...*
+<p align="center">
+  <img src="screenshots/01-home-with-notes.png" width="250" alt="Home screen with notes" />
+  <img src="screenshots/02-search-results.png" width="250" alt="Search functionality" />
+  <img src="screenshots/04-note-editing.png" width="250" alt="Note editing interface" />
+</p>
+
+<p align="center">
+  <img src="screenshots/05-dark-mode.png" width="250" alt="Dark mode support" />
+  <img src="screenshots/06-settings.png" width="250" alt="Settings screen" />
+  <img src="screenshots/03-empty-state.png" width="250" alt="Empty state design" />
+</p>
 
 ## Tech Stack
 
