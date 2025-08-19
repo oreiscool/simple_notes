@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="simple_notes_new"
+        android:label="Simple Notes"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/simple_notes">
         <activity
             android:name=".MainActivity"
             android:exported="true"
