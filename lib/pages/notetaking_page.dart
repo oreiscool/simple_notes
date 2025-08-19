@@ -91,15 +91,25 @@ class _NoteTakingState extends ConsumerState<NoteTakingPage> {
       Navigator.pop(context);
       return;
     }
-    if (widget.note == null) {
-      await database.createNote(title: title, content: content);
-    } else {
+
+    // Always update the note (auto-save should have created it if needed)
+    if (_currentNoteId != null) {
       await database.updateNote(
-        id: widget.note!.id,
+        id: _currentNoteId!,
+        title: title,
+        content: content,
+      );
+    } else {
+      // Only create if auto-save hasn't created it yet
+      _currentNoteId = await database.createNote(
         title: title,
         content: content,
       );
     }
+
+    _lastSavedTitle = title;
+    _lastSavedContent = content;
+
     if (!mounted) return;
     ScaffoldMessenger.of(
       context,
