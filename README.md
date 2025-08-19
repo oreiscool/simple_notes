@@ -1,22 +1,22 @@
-# Simple Notes 📝
+# Simple Notes
 
 A clean, minimalist note-taking app built with Flutter. Perfect for quick thoughts, ideas, and reminders.
 
-## Features ✨
+## Features
 
-- **📝 Create & Edit Notes**: Simple and intuitive note creation
-- **🔍 Search**: Find your notes quickly with search functionality
-- **📌 Pin Notes**: Keep important notes at the top
-- **🌙 Dark/Light Theme**: Choose your preferred theme
-- **💾 Auto-Save**: Your notes are automatically saved as you type
-- **📱 Responsive Design**: Works great on all screen sizes
-- **🎨 Material Design 3**: Modern, clean UI following Material Design principles
+- **Create & Edit Notes**: Simple and intuitive note creation
+- **Search**: Find your notes quickly with search functionality
+- **Pin Notes**: Keep important notes at the top
+- **Dark/Light Theme**: Choose your preferred theme
+- **Auto-Save**: Your notes are automatically saved as you type
+- **Responsive Design**: Works great on all screen sizes
+- **Material Design 3**: Modern, clean UI following Material Design principles
 
-## Screenshots 📸
+## Screenshots
 
 *Screenshots coming soon...*
 
-## Tech Stack 🛠️
+## Tech Stack
 
 - **Framework**: Flutter 3.9.0
 - **State Management**: Riverpod
@@ -24,7 +24,7 @@ A clean, minimalist note-taking app built with Flutter. Perfect for quick though
 - **UI**: Material Design 3
 - **Architecture**: Clean Architecture with Provider pattern
 
-## Getting Started 🚀
+## Getting Started
 
 ### Prerequisites
 - Flutter SDK (3.9.0 or higher)
@@ -49,7 +49,7 @@ A clean, minimalist note-taking app built with Flutter. Perfect for quick though
    flutter run
    ```
 
-## Building for Release 📦
+## Building for Release
 
 ### Android APK
 ```bash
@@ -61,7 +61,7 @@ flutter build apk --release
 flutter build appbundle --release
 ```
 
-## Project Structure 📁
+## Project Structure
 
 ```
 lib/
@@ -73,7 +73,7 @@ lib/
 └── widgets/        # Reusable UI components
 ```
 
-## Contributing 🤝
+## Contributing
 
 1. Fork the project
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
@@ -81,16 +81,16 @@ lib/
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## License 📄
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments 🙏
+## Acknowledgments
 
-- Built with ❤️ using Flutter
+- Built with Flutter
 - Icons from Material Design
 - Inspired by clean, minimalist design principles
 
 ---
 
-**Made by Stevie** 🎯
+**Made by Stevie**
