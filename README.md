@@ -18,7 +18,7 @@ A clean, minimalist note-taking app built with Flutter. Perfect for quick though
 
 ## Tech Stack
 
-- **Framework**: Flutter 3.9.0
+- **Framework**: Flutter 3.35.1
 - **State Management**: Riverpod
 - **Database**: Drift (SQLite)
 - **UI**: Material Design 3
@@ -27,7 +27,7 @@ A clean, minimalist note-taking app built with Flutter. Perfect for quick though
 ## Getting Started
 
 ### Prerequisites
-- Flutter SDK (3.9.0 or higher)
+- Flutter SDK (3.35.1 or higher)
 - Dart SDK
 - Android Studio / VS Code
 
