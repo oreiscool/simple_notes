@@ -27,7 +27,7 @@ A clean, minimalist note-taking app built with Flutter. Perfect for quick though
 
 <p align="center">
   <img src="screenshots/05-dark-mode.png" width="250" alt="Dark mode support" />
-  <img src="screenshots/06-settings.png" width="250" alt="Settings screen" />
+  <img src="screenshots/06-settings-page.png" width="250" alt="Settings screen" />
   <img src="screenshots/03-empty-state.png" width="250" alt="Empty state design" />
 </p>
 
