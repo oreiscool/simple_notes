@@ -84,7 +84,6 @@ lib/
 ├── models/         # Data models
 ├── pages/          # UI screens
 ├── provider/       # State management
-├── utils/          # Utility functions
 └── widgets/        # Reusable UI components
 ```
 
