@@ -50,7 +50,7 @@ A clean, minimalist note-taking app built with Flutter. Perfect for quick though
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/oreiscool/simple_notes.git
    cd simple_notes
    ```
 
